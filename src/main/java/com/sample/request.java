@@ -105,17 +105,6 @@ public class request {
 		this.drivers.add(newDriver);
 	}
 	
-	public boolean alleHabenFahrsicherheitstraining () {
-		boolean save = true;
-		if (!tenant.isSafetyTraining())
-			save = false;
-		for (Person p: drivers) {
-			if (!p.isSafetyTraining())
-				save = false;
-		}	
-		return save;
-	}
-	
 	public void calculateOfferPrice () {
 		totalPrice = (loanPeriod - numberOfSpecialDays) * carModel.getPrice();
 		totalPrice += numberOfSpecialDays * (carModel.getPrice() * ((100-specialDiscount)/100) );

@@ -1,6 +1,8 @@
 package com.sample;
 
 public class Person {
+	private int minDurationOfLicense = 2;
+	private int minAge = 21;
 	
 	private int age;
 	private int durationOfLicense;
@@ -15,7 +17,7 @@ public class Person {
 	
 	public Person () {
 		super();
-		age = -1;
+		age = 0;
 		durationOfLicense = 0;
 		value = 0;
 		safetyTraining = false;
@@ -33,6 +35,15 @@ public class Person {
 		this.newCustomer = newCustomer;
 		this.claim = claim;
 		this.setDiscount(0);
+		
+		this.newbie = lookIfNewbie();
+	}
+	
+	public boolean lookIfNewbie(){
+		if(durationOfLicense < minDurationOfLicense || age < minAge){
+			return true;
+		}
+		return false;
 	}
 	
 	public void output () {
@@ -60,6 +71,11 @@ public class Person {
 			System.out.println("Anspruch: ja");
 		} else {
 			System.out.println("Anspruch: nein");
+		}
+		if (newbie) {
+			System.out.println("FahranfŠnger: ja");
+		} else {
+			System.out.println("FahranfŠnger: nein");
 		}
 	}
 	

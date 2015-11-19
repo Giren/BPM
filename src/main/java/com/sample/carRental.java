@@ -25,24 +25,17 @@ public class carRental {
 			// Test a
 			System.out.println("Test a:");
 			
-			Person driver1 = new Person();
-			driver1.setDurationOfLicense(20);
-			driver1.setAge(25);
+			Person driver1 = new Person(22, 5, 0, false, false, false);
 			driver1.output();
 			
-			Person pa = new Person();
-			pa.setDurationOfLicense(20);
-			pa.setAge(50);
-			pa.setSafetyTraining(true);
-			pa.setNewCustomer(true);
-			pa.setClaim(true);
+			Person pa = new Person(50, 25, 0, true, true, true);
 			pa.output();
 			
 			Calendar ca = Calendar.getInstance();
 			ca.set(2016, Calendar.MARCH, 25);
 			
 			ArrayList<Person> drivers = new ArrayList<Person>();
-			//drivers.add(driver1);
+			drivers.add(driver1);
 			drivers.add(pa);
 	
 			request requestA = new request(CarModel.middleClass, ca, 10, carPool, drivers);
