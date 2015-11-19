@@ -2,12 +2,19 @@ package com.sample;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class request {
+	private double specialDiscount = 25;
+	private double maxDiscount = 100;
+	
+	private int numberOfFreeDays;
 	private CarModel carModel;
 	private int carPrice;
 	private Date dateOfLoan;
+	private Calendar calendar;
+	private int numberOfSpecialDays;
 	private int decreasing;
 	private int loanPeriod;
 	private boolean automatic;
@@ -25,18 +32,65 @@ public class request {
 		setDiscount(0);	
 	}
 	
-	public request(int carPrice, Date dateOfLoan, int loanPeriod,
-			Person tenant, CarPool carPool) {
+	public request(int carPrice, Calendar calendar, int loanPeriod, CarPool carPool, ArrayList<Person> drivers) {
 		super();
-		this.setDateOfLoan(dateOfLoan);
-		this.setLoanPeriod(loanPeriod);
-		this.setTenant(tenant);
-		this.carModel = carPool.getCar(carPrice);
-		setCarPrice(carPrice);
-		setDrivers(new ArrayList<Person>());
-		setTotalPrice(0);
-		setDiscount(0);
-		setDecreasing(0);
+		dateOfLoan = calendar.getTime();
+		carModel = carPool.getCar(carPrice);
+		this.loanPeriod = loanPeriod;
+		this.calendar = calendar;
+		this.carPrice = carPrice;
+		this.drivers = drivers;
+		this.totalPrice = 0;
+		this.discount = 0;
+		this.decreasing = 0;
+		this.numberOfFreeDays = 0;
+		this.numberOfSpecialDays = 0;
+		
+		this.tenant = lookForTenant();
+	}
+	
+	public Person lookForTenant() {
+		Person worstPerson = null;
+		
+		for(Person p:drivers){
+			if(p.isSafetyTraining() == true){
+				p.addDiscount(5);
+			}
+			
+			if(p.isNewbie() == true){
+				p.addDiscount(-10);
+			}
+		}
+		
+		for(Person p:drivers){
+			if(worstPerson == null){
+				worstPerson = p;
+			}
+			if(p.getDiscount() < worstPerson.getDiscount()){
+				worstPerson = p;
+			}
+		}
+		
+		System.out.println("worstPerson:"+worstPerson.getAge());
+		return worstPerson;
+	}
+	
+	public void calculateNumberOfFreeDays(){
+		numberOfFreeDays = loanPeriod / 7;
+		loanPeriod -= numberOfFreeDays;
+	}
+	
+	//muss vor calculateNumberOfFreeDays aufgerufen werden
+	public void calculateSpecialDays(){
+		//TODO Feiertage 
+		Calendar ca = Calendar.getInstance();
+		for(int i=0;i<loanPeriod;i++){
+			if(i%7 > 0 || i == 0) {
+				ca.set(2016, Calendar.MARCH, dateOfLoan.getDate()+i);
+				if(ca.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || ca.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+			        numberOfSpecialDays++;
+			}
+		}
 	}
 	
 	public void addDiscount(double addDiscount) {
@@ -63,9 +117,17 @@ public class request {
 	}
 	
 	public void calculateOfferPrice () {
-		this.totalPrice = this.loanPeriod * carModel.getPrice();
-		this.totalPrice -= this.decreasing;
-		this.totalPrice -= this.totalPrice * (this.discount/100);
+		totalPrice = (loanPeriod - numberOfSpecialDays) * carModel.getPrice();
+		totalPrice += numberOfSpecialDays * (carModel.getPrice() * ((100-specialDiscount)/100) );
+		totalPrice -= decreasing;
+		
+		if(totalPrice * (discount/100) > maxDiscount){
+			totalPrice -= maxDiscount;
+			System.out.println("LIMIT erreicht !!!!!!");
+		} else{
+			totalPrice -= totalPrice * (discount/100);
+			System.out.println("LIMIT NICHT erreicht !!!!!!");
+		}
 	}
 	
 	public void output () {
@@ -74,10 +136,6 @@ public class request {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		System.out.println("Leidatum: " + dateFormat.format(dateOfLoan));
 		System.out.println("Leihdauer: "+ loanPeriod);
-		if (totalPrice != -1)
-			System.out.println("Gesamtpreis: "+ totalPrice +" Û");
-		System.out.println("Rabatt: "+ discount +"%");
-		System.out.println("Nachlass: "+ decreasing +"Û");
 	}
 	
 	public void outputOffer () {
@@ -89,6 +147,8 @@ public class request {
 		System.out.println("Gesamtpreis: "+ totalPrice +" Û");
 		System.out.println("Rabatt: "+ discount +"%");	
 		System.out.println("Nachlass: "+ decreasing +"Û");
+		System.out.println("Wochenende: "+ numberOfSpecialDays);
+		System.out.println("Freie Tage: "+ numberOfFreeDays);
 	}
 	
 	
@@ -171,5 +231,13 @@ public class request {
 
 	public void setDecreasing(int decreasing) {
 		this.decreasing = decreasing;
+	}
+
+	public int getNumberOfFreeDays() {
+		return numberOfFreeDays;
+	}
+
+	public void setNumberOfFreeDays(int numberOfFreeDays) {
+		this.numberOfFreeDays = numberOfFreeDays;
 	}
 }

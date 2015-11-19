@@ -4,18 +4,20 @@ public class Person {
 	
 	private int age;
 	private int durationOfLicense;
+	private int discount;
 	
 	private double value;
 	private boolean safetyTraining;
 	private boolean newCustomer;
 	private boolean claim;
+	private boolean newbie;
 	
 	
 	public Person () {
 		super();
 		age = -1;
-		durationOfLicense = -1;
-		value = -1;
+		durationOfLicense = 0;
+		value = 0;
 		safetyTraining = false;
 		newCustomer = false;
 		claim = false;
@@ -30,6 +32,35 @@ public class Person {
 		this.safetyTraining = safetyTraining;
 		this.newCustomer = newCustomer;
 		this.claim = claim;
+		this.setDiscount(0);
+	}
+	
+	public void output () {
+		System.out.println("--------- Person --------- ");
+		if (age != 0) {
+			System.out.println("Alter: "+ age +" Jahre" );
+		}
+		if (durationOfLicense != 0) {
+			System.out.println("Fuehrerscheinjahre: "+durationOfLicense);
+		}
+		if (value != 0) { 
+			System.out.println("Umsatz: "+value+" Û");
+		}
+		if (safetyTraining) {
+			System.out.println("Fahrsicherheitstraining: ja");
+		} else {
+			System.out.println("Fahrsicherheitstraining: nein");
+		}
+		if (newCustomer) {
+			System.out.println("Neukunde: ja");
+		} else {
+			System.out.println("Neukunde: nein");
+		}
+		if (claim) {
+			System.out.println("Anspruch: ja");
+		} else {
+			System.out.println("Anspruch: nein");
+		}
 	}
 	
 	
@@ -77,27 +108,23 @@ public class Person {
 		this.claim = claim;
 	}
 
+	public int getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(int discount) {
+		this.discount = discount;
+	}
 	
-	public void output () {
-		System.out.println("--------- Person --------- ");
-		if (age != -1) {
-			System.out.println(" Alter: "+ age +" Jahre" );
-		}
-		if (durationOfLicense != -1) {
-			System.out.println("Fuehrerscheinjahre: "+durationOfLicense);
-		}
-		if (value != -1) { 
-			System.out.println("Umsatz: "+value+" Û");
-		}
-		if (safetyTraining) {
-			System.out.println("Fahrsicherheitstraining: ja");
-		} else {
-			System.out.println("Fahrsicherheitstraining: nein");
-		}
-		if (newCustomer) {
-			System.out.println("Neukunde: ja");
-		} else {
-			System.out.println("Neukunde: nein");
-		}
+	public void addDiscount(int discount){
+		this.discount += discount;
+	}
+
+	public boolean isNewbie() {
+		return newbie;
+	}
+
+	public void setNewbie(boolean newbie) {
+		this.newbie = newbie;
 	}	
 }

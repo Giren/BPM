@@ -1,5 +1,6 @@
 package com.sample;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,17 +24,29 @@ public class carRental {
         	
 			// Test a
 			System.out.println("Test a:");
+			
+			Person driver1 = new Person();
+			driver1.setDurationOfLicense(20);
+			driver1.setAge(25);
+			driver1.output();
+			
 			Person pa = new Person();
 			pa.setDurationOfLicense(20);
-			pa.setValue(3000);
+			pa.setAge(50);
 			pa.setSafetyTraining(true);
 			pa.setNewCustomer(true);
+			pa.setClaim(true);
 			pa.output();
 			
 			Calendar ca = Calendar.getInstance();
-			ca.set(2015, 10-1, 1);
-			Date da = ca.getTime();
-			request requestA = new request(CarModel.middleClass, da, 5, pa, carPool);
+			ca.set(2016, Calendar.MARCH, 25);
+			
+			ArrayList<Person> drivers = new ArrayList<Person>();
+			//drivers.add(driver1);
+			drivers.add(pa);
+	
+			request requestA = new request(CarModel.middleClass, ca, 10, carPool, drivers);
+			requestA.setAutomatic(true);
 			requestA.output();
 
 			kSession.insert(requestA);
@@ -45,33 +58,4 @@ public class carRental {
             t.printStackTrace();
         }
     }
-
-    public static class Message {
-
-        public static final int REQUEST = 0;
-        public static final int GOODBYE = 1;
-        public static final int END = 2;
-
-        private String message;
-
-        private int status;
-
-        public String getMessage() {
-            return this.message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-
-        public int getStatus() {
-            return this.status;
-        }
-
-        public void setStatus(int status) {
-            this.status = status;
-        }
-
-    }
-
 }
