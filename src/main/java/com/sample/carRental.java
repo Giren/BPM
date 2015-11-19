@@ -27,6 +27,7 @@ public class carRental {
 			pa.setDurationOfLicense(20);
 			pa.setValue(3000);
 			pa.setSafetyTraining(true);
+			pa.setNewCustomer(true);
 			pa.output();
 			
 			Calendar ca = Calendar.getInstance();
@@ -34,15 +35,12 @@ public class carRental {
 			Date da = ca.getTime();
 			request requestA = new request(CarModel.middleClass, da, 5, pa, carPool);
 			requestA.output();
-	
-			
-			System.out.println("Regeln werden ausgefuehrt");
+
 			kSession.insert(requestA);
 			kSession.fireAllRules();
-			requestA.outputRequest();
-            
-            
-            
+			
+			requestA.outputOffer();
+			
         } catch (Throwable t) {
             t.printStackTrace();
         }

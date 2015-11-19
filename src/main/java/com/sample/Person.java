@@ -94,5 +94,10 @@ public class Person {
 		} else {
 			System.out.println("Fahrsicherheitstraining: nein");
 		}
+		if (newCustomer) {
+			System.out.println("Neukunde: ja");
+		} else {
+			System.out.println("Neukunde: nein");
+		}
 	}	
 }

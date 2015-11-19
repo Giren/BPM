@@ -8,6 +8,7 @@ public class request {
 	private CarModel carModel;
 	private int carPrice;
 	private Date dateOfLoan;
+	private int decreasing;
 	private int loanPeriod;
 	private boolean automatic;
 	
@@ -20,7 +21,7 @@ public class request {
 	public request() {
 		super();
 		setDrivers(new ArrayList <Person>());
-		setTotalPrice(-1);
+		setTotalPrice(0);
 		setDiscount(0);	
 	}
 	
@@ -33,15 +34,18 @@ public class request {
 		this.carModel = carPool.getCar(carPrice);
 		setCarPrice(carPrice);
 		setDrivers(new ArrayList<Person>());
-		setTotalPrice(-1);
+		setTotalPrice(0);
 		setDiscount(0);
-		
+		setDecreasing(0);
 	}
 	
 	public void addDiscount(double addDiscount) {
 		this.discount += addDiscount;
 	}
-
+	
+	public void addDecreasing(int decreasing){
+		this.decreasing += decreasing;
+	}
 	
 	public void addDriver (Person newDriver) {
 		this.drivers.add(newDriver);
@@ -58,8 +62,10 @@ public class request {
 		return save;
 	}
 	
-	public void calculatePreis () {
-		totalPrice = totalPrice - totalPrice * (discount/100);
+	public void calculateOfferPrice () {
+		this.totalPrice = this.loanPeriod * carModel.getPrice();
+		this.totalPrice -= this.decreasing;
+		this.totalPrice -= this.totalPrice * (this.discount/100);
 	}
 	
 	public void output () {
@@ -70,17 +76,19 @@ public class request {
 		System.out.println("Leihdauer: "+ loanPeriod);
 		if (totalPrice != -1)
 			System.out.println("Gesamtpreis: "+ totalPrice +" Û");
-		System.out.println("Rabatt: "+ discount +"%");	
+		System.out.println("Rabatt: "+ discount +"%");
+		System.out.println("Nachlass: "+ decreasing +"Û");
 	}
 	
-	public void outputRequest () {
-		System.out.println("Angebot - ");
+	public void outputOffer () {
+		System.out.println("--------- Angebot ---------");
 		System.out.println("Wagenpreis: "+ carPrice +" Û/Tag");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		System.out.println("Leidatum: " +dateFormat.format(dateOfLoan));
 		System.out.println("Leihdauer: "+ loanPeriod);
 		System.out.println("Gesamtpreis: "+ totalPrice +" Û");
 		System.out.println("Rabatt: "+ discount +"%");	
+		System.out.println("Nachlass: "+ decreasing +"Û");
 	}
 	
 	
@@ -155,5 +163,13 @@ public class request {
 
 	public void setCarModel(CarModel carModel) {
 		this.carModel = carModel;
+	}
+
+	public int getDecreasing() {
+		return decreasing;
+	}
+
+	public void setDecreasing(int decreasing) {
+		this.decreasing = decreasing;
 	}
 }
