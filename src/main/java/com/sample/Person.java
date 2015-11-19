@@ -17,12 +17,6 @@ public class Person {
 	
 	public Person () {
 		super();
-		age = 0;
-		durationOfLicense = 0;
-		value = 0;
-		safetyTraining = false;
-		newCustomer = false;
-		claim = false;
 	}
 	
 	public Person(int age, int durationOfLicense, double value,
@@ -34,7 +28,7 @@ public class Person {
 		this.safetyTraining = safetyTraining;
 		this.newCustomer = newCustomer;
 		this.claim = claim;
-		this.setDiscount(0);
+		discount = 0;
 		
 		this.newbie = lookIfNewbie();
 	}

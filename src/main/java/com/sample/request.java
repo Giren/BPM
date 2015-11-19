@@ -27,12 +27,9 @@ public class request {
 	
 	public request() {
 		super();
-		setDrivers(new ArrayList <Person>());
-		setTotalPrice(0);
-		setDiscount(0);	
 	}
 	
-	public request(int carPrice, Calendar calendar, int loanPeriod, CarPool carPool, ArrayList<Person> drivers) {
+	public request(int carPrice, Calendar calendar, int loanPeriod, CarPool carPool, ArrayList<Person> drivers, boolean automatic) {
 		super();
 		dateOfLoan = calendar.getTime();
 		carModel = carPool.getCar(carPrice);
@@ -45,6 +42,7 @@ public class request {
 		this.decreasing = 0;
 		this.numberOfFreeDays = 0;
 		this.numberOfSpecialDays = 0;
+		this.automatic = automatic;
 		
 		this.tenant = lookForTenant();
 	}
@@ -71,7 +69,7 @@ public class request {
 			}
 		}
 		
-		System.out.println("worstPerson:"+worstPerson.getAge());
+		System.out.println("-> worstPerson:" + worstPerson.getAge() + " <-");
 		return worstPerson;
 	}
 	
