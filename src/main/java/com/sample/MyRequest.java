@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class request {
+public class MyRequest {
+
 	private double specialDiscount = 25;
 	private double maxDiscount = 100;
 	
+	private double downgradeDiscount;
 	private int numberOfFreeDays;
 	private CarModel carModel;
 	private int carPrice;
@@ -18,21 +20,24 @@ public class request {
 	private int decreasing;
 	private int loanPeriod;
 	private boolean automatic;
-	
+	private boolean save;
+	private boolean newbie;
 	private Person tenant; //Mieter
 	private ArrayList<Person> drivers;
-	
 	private double totalPrice;
 	private double discount; //Rabatt
+	private boolean upgrade;
+	private boolean downgrade;
 	
-	public request() {
+	public MyRequest() {
 		super();
 	}
 	
-	public request(int carPrice, Calendar calendar, int loanPeriod, CarPool carPool, ArrayList<Person> drivers, boolean automatic) {
+	public MyRequest(Person tenant, int carPrice, Calendar calendar, int loanPeriod, CarPool carPool, ArrayList<Person> drivers, boolean automatic) {
 		super();
+		
 		dateOfLoan = calendar.getTime();
-		carModel = carPool.getCar(carPrice);
+		this.downgradeDiscount = 0;
 		this.loanPeriod = loanPeriod;
 		this.calendar = calendar;
 		this.carPrice = carPrice;
@@ -43,34 +48,48 @@ public class request {
 		this.numberOfFreeDays = 0;
 		this.numberOfSpecialDays = 0;
 		this.automatic = automatic;
+		this.tenant = tenant;
 		
-		this.tenant = lookForTenant();
+		carModel = carPool.getCar(carPrice);
+		if(carModel != null)
+			checkCarModel(carPrice);
+		
+		this.save = hasEverybodySafetyTraining();
+		this.newbie = isSomeoneANewbie();
 	}
 	
-	public Person lookForTenant() {
-		Person worstPerson = null;
-		
-		for(Person p:drivers){
-			if(p.isSafetyTraining() == true){
-				p.addDiscount(5);
+	public void checkCarModel(int originalCarPrice){
+		int newPrice = carModel.getPrice();
+		if(newPrice != originalCarPrice){
+			if(newPrice > originalCarPrice){
+				upgrade = true;
+			} else {
+				downgrade = true;
+				downgradeDiscount = 10;
+				this.setCarPrice(newPrice);
 			}
-			
+		} else{
+			upgrade = false;
+			downgrade = false;
+		}
+	}
+	
+	public boolean isSomeoneANewbie(){
+		for(Person p:drivers){
 			if(p.isNewbie() == true){
-				p.addDiscount(-10);
+				return true;
 			}
 		}
-		
+		return false;
+	}
+	
+	public boolean hasEverybodySafetyTraining(){
 		for(Person p:drivers){
-			if(worstPerson == null){
-				worstPerson = p;
-			}
-			if(p.getDiscount() < worstPerson.getDiscount()){
-				worstPerson = p;
+			if(p.isSafetyTraining() == false){
+				return false;
 			}
 		}
-		
-		System.out.println("-> worstPerson:" + worstPerson.getAge() + " <-");
-		return worstPerson;
+		return true;
 	}
 	
 	public void calculateNumberOfFreeDays(){
@@ -79,7 +98,7 @@ public class request {
 	}
 	
 	//muss vor calculateNumberOfFreeDays aufgerufen werden
-	public void calculateSpecialDays(){
+	public void calculateSpecialDays(){ //Wochenende bzw Feiertage
 		//TODO Feiertage 
 		Calendar ca = Calendar.getInstance();
 		for(int i=0;i<loanPeriod;i++){
@@ -104,8 +123,10 @@ public class request {
 	}
 	
 	public void calculateOfferPrice () {
-		totalPrice = (loanPeriod - numberOfSpecialDays) * carModel.getPrice();
-		totalPrice += numberOfSpecialDays * (carModel.getPrice() * ((100-specialDiscount)/100) );
+		totalPrice = (loanPeriod - numberOfSpecialDays) * carPrice;
+		//Rabatte die nicht zur Regel 9 (Limit durch Rabat bei 100) reinzählen
+		totalPrice += numberOfSpecialDays * (carPrice * ((100-(specialDiscount))/100) );
+		totalPrice = totalPrice * (100-downgradeDiscount) / 100;
 		totalPrice -= decreasing;
 		
 		if(totalPrice * (discount/100) > maxDiscount){
@@ -123,19 +144,67 @@ public class request {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		System.out.println("Leidatum: " + dateFormat.format(dateOfLoan));
 		System.out.println("Leihdauer: "+ loanPeriod);
+		System.out.println("Anzahl Fahrer: "+ drivers.size());
+		if (automatic) {
+			System.out.println("Automatic: ja");
+		} else {
+			System.out.println("Automatic: nein");
+		}
 	}
 	
-	public void outputOffer () {
-		System.out.println("--------- Angebot ---------");
-		System.out.println("Wagenpreis: "+ carPrice +" €/Tag");
+	public String outputOffer () {
+		String offer = new String();
+		offer += "--------- Angebot --------- \n";
+		
+		switch(carModel.getPrice()){
+			case CarModel.smallClass:
+				offer += "Model: Kleinwagen\n";
+				break;
+			case CarModel.compactClass:
+				offer += "Model: Kompaktwagen\n";
+				break;
+			case CarModel.middleClass:
+				offer += "Model: Mittelklassewagen\n";
+				break;
+			case CarModel.upperClass:
+				offer += "Model: Oberklassewagen\n";
+				break;
+		}
+		
+		offer += "Wagenpreis: "+ carPrice +" €/Tag\n";
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		System.out.println("Leidatum: " +dateFormat.format(dateOfLoan));
-		System.out.println("Leihdauer: "+ loanPeriod);
-		System.out.println("Gesamtpreis: "+ totalPrice +" €");
-		System.out.println("Rabatt: "+ discount +"%");	
-		System.out.println("Nachlass: "+ decreasing +"€");
-		System.out.println("Wochenende: "+ numberOfSpecialDays);
-		System.out.println("Freie Tage: "+ numberOfFreeDays);
+		offer += "Leidatum: " + dateFormat.format(dateOfLoan) + "\n";
+		offer += "Leidauer: " + loanPeriod + "\n"; 
+		offer += "Gesamtpreis: " + totalPrice +" €\n";
+		offer += "Rabatt: " + discount +"%\n";
+		offer += "Nachlass: " + decreasing +"€\n";
+		offer += "Wochenende: " + numberOfSpecialDays + "\n";
+		offer += "Freie Tage: " + numberOfFreeDays + "\n";
+		if (downgrade) {
+			offer += "Rabatt für Downgrade: " + downgradeDiscount + "%\n";
+		} 
+		if (save) {
+			offer += "Bonus Fahrsicherheitstraining: ja\n";
+		} else {
+			offer += "Bonus Fahrsicherheitstraining: nein\n";
+		}
+		if (newbie) {
+			offer += "Aufpreis Fahranfänger: ja\n";
+		} else {
+			offer += "Aufpreis Fahranfänger: nein\n";
+		}
+		if (automatic) {
+			offer += "Aufpreis Automatik: ja\n";
+		} else {
+			offer += "Aufpreis Automatik: nein\n";
+		}
+		if (upgrade) {
+			offer += "kostenloses Upgrade: ja\n";
+		} else {
+			offer += "kostenloses Upgrade: nein\n";
+		}
+		
+		return offer;
 	}
 	
 	
@@ -226,5 +295,25 @@ public class request {
 
 	public void setNumberOfFreeDays(int numberOfFreeDays) {
 		this.numberOfFreeDays = numberOfFreeDays;
+	}
+
+	public boolean isSave() {
+		return save;
+	}
+
+	public void setSave(boolean save) {
+		this.save = save;
+	}
+
+	public boolean isNewbie() {
+		return newbie;
+	}
+
+	public void setNewbie(boolean newbie) {
+		this.newbie = newbie;
+	}
+	
+	public boolean isUpgrade(){
+		return this.upgrade;
 	}
 }

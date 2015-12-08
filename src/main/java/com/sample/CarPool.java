@@ -7,8 +7,8 @@ public class CarPool {
 	CarModel upperClass;
 	
 	int smallCount;
-	int middleCount;
 	int compactCount;
+	int middleCount;
 	int upperCount;
 	
 	public CarPool(){
@@ -18,8 +18,8 @@ public class CarPool {
 		upperClass = new CarModel(CarModel.upperClass);
 		
 		smallCount = 2;
-		middleCount = 2;
 		compactCount = 2;
+		middleCount = 2;
 		upperCount = 2;
 	}
 	
@@ -30,34 +30,35 @@ public class CarPool {
 					this.smallCount--;
 					return new CarModel(CarModel.smallClass);
 				} else{
-					return getHigherModel(CarModel.smallClass);
+					return getNewModel(CarModel.smallClass);
 				}
 			case CarModel.compactClass:
 				if(compactCount > 0){
 					this.compactCount--;
 					return new CarModel(CarModel.compactClass);
 				} else{
-					return getHigherModel(CarModel.compactClass);
+					return getNewModel(CarModel.compactClass);
 				}
 			case CarModel.middleClass:
 				if(middleCount > 0){
 					this.middleCount--;
 					return new CarModel(CarModel.middleClass);
 				} else{
-					return getHigherModel(CarModel.middleClass);
+					return getNewModel(CarModel.middleClass);
 				}
 			case CarModel.upperClass:
 				if(upperCount > 0){
 					this.upperCount--;
 					return new CarModel(CarModel.upperClass);
 				} else{
-					return getHigherModel(CarModel.upperClass);
+					return getNewModel(CarModel.upperClass);
 				}
 		}
 		return null;
 	}
 	
-	public CarModel getHigherModel (int carModel) {
+	//behandelt sowohl upgrade als auch downgrade
+	public CarModel getNewModel (int carModel) {
 		switch(carModel) {
 			case CarModel.smallClass:
 				if(compactCount > 0){
@@ -78,8 +79,30 @@ public class CarPool {
 				} 
 				break;
 			case CarModel.upperClass:
+				if(middleCount > 0){
+					this.middleCount--;
+					return new CarModel(CarModel.middleClass);
+				}
 				break;
 		}
 		return null;	
 	}
+	
+	public void addCarModel(int carModel){
+		switch(carModel) {
+		case CarModel.smallClass:
+			this.smallCount++;
+			break;
+		case CarModel.compactClass:
+			this.compactCount++;
+			break;
+		case CarModel.middleClass:
+			this.middleCount++;
+			break;
+		case CarModel.upperClass:
+			this.upperCount++;
+			break;
+		}
+	}
+	
 }
