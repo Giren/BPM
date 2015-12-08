@@ -37,8 +37,6 @@ public class CarRental {
 					
 					if(req.getCarModel() != null){
 						req.output();
-//						for(int i = 0; i<req.getDrivers().size(); i++)
-//							req.getDrivers().get(i).output();
 						kSession.insert(req);
 						kSession.fireAllRules();					
 						offerOutput();
@@ -79,7 +77,7 @@ public class CarRental {
 					// TODO Auto-generated method stub
 				}
 			});
-			
+		
         } catch (Throwable t) {
             t.printStackTrace();
         }
