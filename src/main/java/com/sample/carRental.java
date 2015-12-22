@@ -30,7 +30,7 @@ public class CarRental {
         	
 			final GuiRental gui = new GuiRental();
 			gui.show(true);
-			gui.addWindowListener(new WindowListener() {	
+			gui.addWindowListener(new WindowListener() {
 				@Override
 				public void windowClosed(WindowEvent e) {
 					req = gui.getRequest();
@@ -76,8 +76,7 @@ public class CarRental {
 				public void windowOpened(WindowEvent e) {
 					// TODO Auto-generated method stub
 				}
-			});
-		
+			});	
         } catch (Throwable t) {
             t.printStackTrace();
         }
