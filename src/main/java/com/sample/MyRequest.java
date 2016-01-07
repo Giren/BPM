@@ -15,7 +15,6 @@ public class MyRequest {
 	private CarModel carModel;
 	private int carPrice;
 	private Date dateOfLoan;
-	private Calendar calendar;
 	private int numberOfSpecialDays;
 	private int decreasing;
 	private int loanPeriod;
@@ -39,7 +38,6 @@ public class MyRequest {
 		dateOfLoan = calendar.getTime();
 		this.downgradeDiscount = 0;
 		this.loanPeriod = loanPeriod;
-		this.calendar = calendar;
 		this.carPrice = carPrice;
 		this.drivers = drivers;
 		this.totalPrice = 0;
@@ -99,15 +97,28 @@ public class MyRequest {
 	
 	//muss vor calculateNumberOfFreeDays aufgerufen werden
 	public void calculateSpecialDays(){ //Wochenende bzw Feiertage
-		//TODO Feiertage 
 		Calendar ca = Calendar.getInstance();
-		for(int i=0;i<loanPeriod;i++){
+		ca.set(2016, dateOfLoan.getMonth(), dateOfLoan.getDate());
+		
+		for(int i=1;i<=loanPeriod;i++) {
 			if(i%7 > 0 || i == 0) {
-				ca.set(2016, Calendar.MARCH, dateOfLoan.getDate()+i);
-				if(ca.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || ca.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+				if(ca.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || 
+						ca.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
+						proofHoliday(ca)) {
 			        numberOfSpecialDays++;
+				}
+			}
+			ca.add(Calendar.DAY_OF_MONTH, 1);
+		}
+	}
+	
+	public boolean proofHoliday(Calendar ca){
+		if(ca.get(Calendar.MONTH) == Calendar.MARCH){
+			if(ca.get(Calendar.DAY_OF_MONTH) == 25 || ca.get(Calendar.DAY_OF_MONTH) == 28){
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	public void addDiscount(double addDiscount) {
@@ -153,6 +164,7 @@ public class MyRequest {
 	}
 	
 	public String outputOffer () {
+		loanPeriod += numberOfFreeDays;
 		String offer = new String();
 		offer += "--------- Angebot --------- \n";
 		

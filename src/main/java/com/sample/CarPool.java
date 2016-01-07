@@ -1,10 +1,10 @@
 package com.sample;
 
 public class CarPool {
-	CarModel smallClass;
-	CarModel middleClass;
-	CarModel compactClass;
-	CarModel upperClass;
+//	CarModel smallClass;
+//	CarModel middleClass;
+//	CarModel compactClass;
+//	CarModel upperClass;
 	
 	int smallCount;
 	int compactCount;
@@ -12,10 +12,10 @@ public class CarPool {
 	int upperCount;
 	
 	public CarPool(){
-		smallClass = new CarModel(CarModel.smallClass);
-		middleClass = new CarModel(CarModel.middleClass);
-		compactClass = new CarModel(CarModel.compactClass);
-		upperClass = new CarModel(CarModel.upperClass);
+//		smallClass = new CarModel(CarModel.smallClass);
+//		middleClass = new CarModel(CarModel.middleClass);
+//		compactClass = new CarModel(CarModel.compactClass);
+//		upperClass = new CarModel(CarModel.upperClass);
 		
 		smallCount = 2;
 		compactCount = 2;

@@ -18,7 +18,6 @@ public class CarRental {
 	private static MyRequest req;
 	private static AuthGui authGui;
 	
-	
     public static final void main(String[] args) {
         try {
             // load up the knowledge base
